@@ -20,6 +20,7 @@ BBQ assignment
 **Example application flow:**
 
 ![Example application flow](./flow.svg)
+
 **Legend:**
 - Arrows are client requests
 - Rectangles are server responses
