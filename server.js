@@ -1,15 +1,25 @@
+"use strict";
 const { Server } = require('net')
 const express = require('express')
 const { socketPort, httpPort, clientRequests, serverResponses, serverPushes } = require("./bbq.js")
 const MessageHandler = require("./message_handler.js")
 
+function generateId(prefix, ip, port){
+	if(prefix.toLowerCase() === "socket"){
+		return `${prefix}:[${ip}]:${port}`
+	}
+	if(prefix.toLowerCase() === "http"){
+		return `${prefix}:[${ip}]`
+	}
+}
+
 const socketApp = new Server(socket => {
 	socket.on('data', async (message) => {
-		uniqueID = `socket:[${socket.remoteAddress}]:${socket.remotePort}`
+		let uniqueID = generateId("socket", socket.remoteAddress, socket.remotePort)
 
-		console.log(`\nSocket: ${uniqueID} to server: ${message.toString('utf8')}`)
-		response = await MessageHandler.handleMessage(message.toString('utf8'), uniqueID)
-		console.log(`Socket: server to ${uniqueID}: ${response}`)
+		console.log(`\nTCP: ${uniqueID} to server: ${message.toString('utf8')}`)
+		let response = await MessageHandler.handleMessage(message.toString('utf8'), uniqueID)
+		console.log(`TCP: server to ${uniqueID}: ${response}`)
 
 		if (response === serverResponses.closed || response === serverResponses.served) {
 			socket.end(response);
@@ -18,7 +28,8 @@ const socketApp = new Server(socket => {
 		}
 	})
 	socket.on('end', () => {
-		console.log('Client disconnected')
+		let uniqueID = generateId("socket", socket.remoteAddress, socket.remotePort)
+		console.log(`${uniqueID} disconnected`)
 		MessageHandler.deleteStateById(uniqueID)
 	})
 	socket.on('error', () => {
@@ -26,7 +37,7 @@ const socketApp = new Server(socket => {
 		socket.end()
 	})
 })
-socketApp.listen(socketPort, () => console.log(`Socket server listening on ${socketPort}`))
+socketApp.listen(socketPort, () => console.log(`TCP server listening on ${socketPort}`))
 
 const expressApp = express()
 expressApp.use(express.text())
@@ -36,10 +47,10 @@ expressApp.get('/bbq', (req, res) => {
 	res.send(`Client request options are:\n${clientRequests.hungry}\n${clientRequests.decline}\n${clientRequests.take}`)
 })
 expressApp.post('/bbq', async (req, res) => {
-	uniqueID = `http:[${req.ip}]`
+	let uniqueID = generateId("http", req.ip, req.socket.remotePort)
 
 	console.log(`\nHTTP: ${uniqueID} to server: ${req.body}`)
-	response = await MessageHandler.handleMessage(req.body, uniqueID)
+	let response = await MessageHandler.handleMessage(req.body, uniqueID)
 	console.log(`HTTP: server to ${uniqueID}: ${response}`)
 
 	if (response === serverResponses.closed || response === serverResponses.served) {

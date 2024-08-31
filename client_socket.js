@@ -1,3 +1,4 @@
+"use strict";
 const readline = require('node:readline');
 const { Socket } = require('net')
 const { socketPort, clientRequests, serverResponses, serverPushes } = require("./bbq.js")

@@ -1,3 +1,4 @@
+"use strict"
 const { clientRequests, serverResponses, serverPushes } = require("../bbq.js")
 const MessageHandler = require("../message_handler.js")
 MessageHandler.waitTime = 10
@@ -7,14 +8,14 @@ function getRandomInt() {
 }
 
 test('Return wait on hungry request', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverResponses.wait)
 })
 
 test('Decline all bbq', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverResponses.wait)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverPushes.chicken)
@@ -31,8 +32,8 @@ test('Decline all bbq', async () => {
 })
 
 test('Accept chicken', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverResponses.wait)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverPushes.chicken)
@@ -41,8 +42,8 @@ test('Accept chicken', async () => {
 })
 
 test('Accept beef', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverResponses.wait)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverPushes.chicken)
@@ -55,8 +56,8 @@ test('Accept beef', async () => {
 })
 
 test('Accept mammoth', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverResponses.wait)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	expect(response).toBe(serverPushes.chicken)
@@ -73,17 +74,17 @@ test('Accept mammoth', async () => {
 })
 
 test('Start with wrong request', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.take, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.take, uniqueID)
 	expect(response).toBe(serverResponses.closed)
 	response = await MessageHandler.handleMessage(clientRequests.decline, uniqueID)
 	expect(response).toBe(serverResponses.closed)
 })
 
 test('Concurrent users', async () => {
-	uniqueID1 = getRandomInt()
-	uniqueID2 = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID2)
+	let uniqueID1 = getRandomInt()
+	let uniqueID2 = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID2)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID2)
 	response = await MessageHandler.handleMessage(clientRequests.decline, uniqueID2)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID1)
@@ -98,14 +99,14 @@ test('Concurrent users', async () => {
 })
 
 test('Unknown request', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage("different", uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage("different", uniqueID)
 	expect(response).toBe(serverResponses.closed)
 })
 
 test('Delete by uniqueID', async () => {
-	uniqueID = getRandomInt()
-	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
+	let uniqueID = getRandomInt()
+	let response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)
 	response = await MessageHandler.handleMessage(clientRequests.decline, uniqueID)
 	response = await MessageHandler.handleMessage(clientRequests.hungry, uniqueID)

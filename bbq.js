@@ -1,3 +1,4 @@
+"use strict";
 const socketPort = 3000
 const httpPort = 8080
 

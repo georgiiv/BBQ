@@ -1,4 +1,6 @@
+"use strict";
 const readline = require('node:readline');
+const sleep = require('util').promisify(setTimeout)
 const { httpPort, clientRequests, serverResponses, serverPushes } = require("./bbq.js")
 
 const bbqHost = `http://localhost:${httpPort}/bbq`
@@ -20,15 +22,17 @@ async function request(req) {
 }
 
 async function poll() {
+	const retryCount = 5
 	let errorCount = 0
 	let response = null
 	while (response == serverResponses.wait || response == null) {
-		if(errorCount >= 20){console.error("fetch() error count exceeded 20"); process.exit(1)}
+		if(errorCount >= retryCount){console.error(`fetch() error count exceeded ${retryCount}`); process.exit(1)}
 		try {
 			response = await request(clientRequests.hungry)
 		} catch (e) {
 			errorCount+=1
 			console.error("fetch() timeout or error")
+			await sleep(1000)
 		}
 	}
 	return response;

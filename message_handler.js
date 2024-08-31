@@ -1,3 +1,4 @@
+"use strict";
 const sleep = require('util').promisify(setTimeout)
 const { socketPort, httpPort, clientRequests, serverResponses, serverPushes } = require("./bbq.js")
 
@@ -58,13 +59,13 @@ class MessageHandler{
 		if (message === clientRequests.take) {
 			switch (this.#appState[uniqueID]) {
 				case serverPushes.chicken:
-					// console.log("Client took chicken")
+					console.log(`Info: ${uniqueID} took chicken`)
 					break
 				case serverPushes.beef:
-					// console.log("Client took beef")
+					console.log(`Info: ${uniqueID} took beef`)
 					break
 				case serverPushes.mammoth:
-					// console.log("Client took last month mammoth")
+					console.log(`Info: ${uniqueID} took last month mammoth`)
 					break
 				default:
 					console.log(`Bad state: ${this.#appState[uniqueID]}, for message ${message}`)
